@@ -3,42 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一般社団法人次世代設計研究所 | シンプルコーチングアカデミー</title>
+    <title>一般社団法人次世代設計研究所 | コーチングアカデミー</title>
     <style>
-        /* サイト全体のデザイン設定 */
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
-        header { background: #004080; color: white; padding: 1.5rem; text-align: center; }
-        nav { background: #f4f4f4; padding: 0.5rem; text-align: center; border-bottom: 1px solid #ddd; }
+        /* 全体のデザイン設定 */
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        header { background: #004080; color: white; padding: 2rem 1rem; text-align: center; }
+        nav { background: #f4f4f4; padding: 10px; text-align: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #ddd; }
         nav a { margin: 0 15px; text-decoration: none; color: #004080; font-weight: bold; }
-        
-        /* メインの画像エリア（ヒーローセクション） */
-        .hero { 
-            background: linear-gradient(rgba(0,64,128,0.3), rgba(0,64,128,0.3)), url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80'); 
-            background-size: cover; 
-            background-position: center; 
-            padding: 6rem 2rem; 
-            text-align: center; 
-            color: #fff; 
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
-        }
-        .hero h2 { font-size: 2rem; margin-bottom: 1rem; }
 
-        .container { width: 90%; max-width: 1000px; margin: auto; padding: 3rem 0; }
-        .section-title { color: #004080; border-left: 5px solid #004080; padding-left: 15px; margin-bottom: 1.5rem; }
+        /* メインの画像エリア（橋の写真） */
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1545147429-6073a994ca66?auto=format&fit=crop&w=1200&q=80'); /* 橋のイメージ写真 */
+            background-size: cover; background-position: center; height: 450px; display: flex; align-items: center; justify-content: center; color: white; text-align: center; 
+        }
+        .hero h2 { font-size: 2.2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
+
+        .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
+        .section-title { color: #004080; border-bottom: 3px solid #004080; display: inline-block; margin-bottom: 30px; font-size: 1.8rem; }
         
-        /* カードのデザイン（事業内容など） */
-        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 2rem; }
-        .card { border: 1px solid #eee; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); background: #fff; }
+        /* 研究所について（理事長の写真を入れる場所） */
+        .profile-flex { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
+        .profile-image { flex: 1; min-width: 300px; }
+        .profile-image img { width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .profile-text { flex: 2; min-width: 300px; }
+
+        .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+        .card { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 6px solid #004080; }
         
-        /* フッターとお問い合わせ */
-        footer { background: #333; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
-        .contact-box { background: #eef4f9; padding: 2rem; border-radius: 8px; text-align: center; }
+        footer { background: #1a202c; color: #cbd5e0; text-align: center; padding: 3rem 1rem; margin-top: 50px; }
     </style>
 </head>
 <body>
+
     <header>
         <h1>一般社団法人次世代設計研究所</h1>
-        <p>シンプルコーチングアカデミー</p>
+        <p>日本傳シンプルコーチングアカデミー</p>
     </header>
 
     <nav>
@@ -48,27 +47,35 @@
         <a href="#contact">お問い合わせ</a>
     </nav>
 
-    <section class="hero">
+    <div class="hero">
         <h2>今の延長線上にない未来を描き、<br>設計し、実現を支援し続ける。</h2>
-        <p><b>日本傳シンプルコーチング</b></p>
-    </section>
-
-    <div class="container" id="about">
-        <h2 class="section-title">ミッションと概要</h2>
-        <p>当研究所では、20年間のコーチングの研究、選択理論心理学とNLPと日本武道のあり方を掛け合わせてシンプルに磨き上げた独自体系「日本傳シンプルコーチング」をフル活用した事業を行っています。</p>
     </div>
 
-    <div style="background-color: #f9f9f9;">
+    <div class="container" id="about">
+        <h2 class="section-title">研究所について</h2>
+        <div class="profile-flex">
+            <div class="profile-image">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" alt="山村理事長イメージ">
+            </div>
+            <div class="profile-text">
+                <h3>ミッション</h3>
+                <p>20年間のコーチング研究、選択理論心理学、NLP、そして日本武道のあり方を掛け合わせ、シンプルに磨き上げた独自体系「日本傳シンプルコーチング」をフル活用しています。</p>
+                <p>私たちは、今の延長線上にない未来を設計し、その実現を全力で支援します。</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="background-color: #f8fafc;">
         <div class="container" id="service">
             <h2 class="section-title">主な事業</h2>
             <div class="card-container">
                 <div class="card">
                     <h3>コーチング事業</h3>
-                    <p>コーチ養成講座、トレーナー養成講座、エグゼクティブコーチング、コーチングセミナー、公立高校講演会など。</p>
+                    <p>コーチ・トレーナー養成講座、エグゼクティブコーチングなど、対人能力を極めるプログラムを提供。</p>
                 </div>
                 <div class="card">
                     <h3>コンサルティング事業</h3>
-                    <p>まちづくり活動、短期・中期・長期での事業設計、新規事業づくり、1Day事業構築、各種セミナーなど。</p>
+                    <p>まちづくり活動、新規事業設計、1Day事業構築など、未来を形にする支援。</p>
                 </div>
             </div>
         </div>
@@ -76,26 +83,13 @@
 
     <div class="container" id="results">
         <h2 class="section-title">信頼の実績</h2>
-        <ul>
-            <li>公立高校講演会、私立高校教職員研修</li>
-            <li>進学塾講師研修、福祉法人職員研修</li>
-            <li>整骨院グループ問診力アップ研修</li>
-            <li>弁護士法人研修、地域講演会</li>
-            <li>エグゼクティブコーチング、コーチ・トレーナー養成講座</li>
-        </ul>
-    </div>
-
-    <div class="container" id="contact">
-        <div class="contact-box">
-            <h2 class="section-title" style="border:none; padding:0;">お問い合わせ</h2>
-            <p>ご相談はメールにてお気軽にご連絡ください。</p>
-            <p><b>Email: hityamamura@gmail.com</b></p>
-            <p>所在地: 大阪府東大阪市高井田元1-4-21</p>
-        </div>
+        <p>公立・私立高校での講演会、進学塾・福祉法人・整骨院等での組織研修、弁護士法人研修など、多岐にわたる分野で成果を上げています。</p>
     </div>
 
     <footer>
-        <p>copyright© 2024 (一社)次世代設計研究所 All Rights Reserved.</p>
+        <p>© 2024 Next Generation Design Institute. All Rights Reserved.</p>
+        <p style="font-size: 0.8rem;">一般社団法人 次世代設計研究所 | 日本傳家元連合会加盟</p>
     </footer>
+
 </body>
 </html>
