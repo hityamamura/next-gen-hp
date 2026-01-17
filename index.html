@@ -1,487 +1,561 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronRight, User, Users, Briefcase, Map, Award, BookOpen, Star, Mail, ArrowRight, ExternalLink } from 'lucide-react';
-
-// ==========================================
-// 【画像設定エリア】
-// ==========================================
-// 1. Hero: メイン背景
-// 2. Tradition: 「赤い橋（希望の架け橋）」の画像を設定しています
-// 3. Profile: プロフィール写真
-
-const images = {
-  // ★ポイント：URLの最後に「?raw=true」を付けました！
-  hero: "https://github.com/hityamamura/next-gen-images/blob/main/team-yamamura-photo.jpg?raw=true",
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一般社団法人 次世代設計研究所</title>
   
-  // ★ポイント：URLの最後に「?raw=true」を付けました！
-  tradition: "https://github.com/hityamamura/next-gen-images/blob/main/bridge-photo.jpg?raw=true",
+  <!-- Tailwind CSS (デザイン用) -->
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  // ★ポイント：URLの最後に「?raw=true」を付けました！
-  profile: "https://github.com/hityamamura/next-gen-images/blob/main/yamamura-photo.jpg?raw=true", 
-};
+  <!-- React (プログラム用) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-// ==========================================
+  <!-- フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    h1, h2, h3, h4, .font-serif {
+      font-family: 'Noto Serif JP', serif;
+    }
+    /* アニメーション定義 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
 
-const navigation = [
-  { name: '研究所について', href: '#institute' },
-  { name: '日本伝シンプルコーチング', href: '#academy' },
-  { name: 'サービス一覧', href: '#services' },
-  { name: '理事長プロフィール', href: '#profile' },
-  { name: 'お問い合わせ', href: '#contact' },
-];
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-const SectionTitle = ({ title, subtitle, align = "center", light = false }) => (
-  <div className={`mb-12 ${align === "left" ? "text-left" : "text-center"}`}>
-    <h3 className={`text-xs md:text-sm font-bold tracking-widest uppercase mb-2 ${light ? "text-amber-400" : "text-amber-700"}`}>
-      {subtitle}
-    </h3>
-    <h2 className={`text-2xl md:text-4xl font-serif font-bold ${light ? "text-white" : "text-slate-900"}`}>
-      {title}
-    </h2>
-    <div className={`h-1 w-20 mt-4 ${align === "center" ? "mx-auto" : ""} ${light ? "bg-amber-400" : "bg-slate-900"}`}></div>
-  </div>
-);
+    // --- アイコンコンポーネント (SVG) ---
+    const Icon = ({ path, size = 24, className = "" }) => (
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width={size} 
+        height={size} 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        className={className}
+      >
+        {path}
+      </svg>
+    );
 
-const Card = ({ icon: Icon, title, description, tags }) => (
-  <div className="bg-white p-6 md:p-8 border-l-4 border-amber-700 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
-    <div className="flex items-center mb-4">
-      <div className="p-3 bg-slate-100 text-slate-900 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors shrink-0">
-        <Icon size={24} />
-      </div>
-      <h3 className="text-lg md:text-xl font-bold ml-4 font-serif">{title}</h3>
-    </div>
-    <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-6 flex-grow">{description}</p>
-    <div className="flex flex-wrap gap-2 mt-auto">
-      {tags.map((tag, index) => (
-        <span key={index} className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600">
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-);
+    const Menu = (props) => <Icon {...props} path={<><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></>} />;
+    const X = (props) => <Icon {...props} path={<><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></>} />;
+    const ChevronRight = (props) => <Icon {...props} path={<polyline points="9 18 15 12 9 6"></polyline>} />;
+    const User = (props) => <Icon {...props} path={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></>} />;
+    const Users = (props) => <Icon {...props} path={<><path d="M17 21v-2a4 4 0 0 0-3-5.59"></path><path d="M9 17H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></>} />;
+    const Briefcase = (props) => <Icon {...props} path={<><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></>} />;
+    const Map = (props) => <Icon {...props} path={<><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></>} />;
+    const Award = (props) => <Icon {...props} path={<><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></>} />;
+    const BookOpen = (props) => <Icon {...props} path={<><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></>} />;
+    const Star = (props) => <Icon {...props} path={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>} />;
+    const Mail = (props) => <Icon {...props} path={<><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></>} />;
+    const ArrowRight = (props) => <Icon {...props} path={<><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></>} />;
 
-export default function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    // ==========================================
+    // 【画像設定エリア】
+    // ここにGitHubで取得した画像のURLが入っています！
+    // ==========================================
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    const images = {
+      hero: "https://github.com/hityamamura/next-gen-images/blob/main/team-yamamura-photo.jpg?raw=true",
+      tradition: "https://github.com/hityamamura/next-gen-images/blob/main/bridge-photo.jpg?raw=true",
+      profile: "https://github.com/hityamamura/next-gen-images/blob/main/yamamura-photo.jpg?raw=true", 
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  return (
-    <div className="font-sans text-slate-800 bg-slate-50 selection:bg-amber-200">
-      
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? "bg-white/95 backdrop-blur-md shadow-md py-3" : "bg-transparent py-6"}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex flex-col z-50 relative">
-            <span className={`text-[10px] md:text-xs font-bold tracking-widest ${isScrolled ? "text-slate-500" : "text-white/80"}`}>
-              (一社)次世代設計研究所
+    // ==========================================
+
+    const navigation = [
+      { name: '研究所について', href: '#institute' },
+      { name: '日本伝シンプルコーチング', href: '#academy' },
+      { name: 'サービス一覧', href: '#services' },
+      { name: '理事長プロフィール', href: '#profile' },
+      { name: 'お問い合わせ', href: '#contact' },
+    ];
+
+    const SectionTitle = ({ title, subtitle, align = "center", light = false }) => (
+      <div className={`mb-12 ${align === "left" ? "text-left" : "text-center"}`}>
+        <h3 className={`text-xs md:text-sm font-bold tracking-widest uppercase mb-2 ${light ? "text-amber-400" : "text-amber-700"}`}>
+          {subtitle}
+        </h3>
+        <h2 className={`text-2xl md:text-4xl font-serif font-bold ${light ? "text-white" : "text-slate-900"}`}>
+          {title}
+        </h2>
+        <div className={`h-1 w-20 mt-4 ${align === "center" ? "mx-auto" : ""} ${light ? "bg-amber-400" : "bg-slate-900"}`}></div>
+      </div>
+    );
+
+    const Card = ({ icon: Icon, title, description, tags }) => (
+      <div className="bg-white p-6 md:p-8 border-l-4 border-amber-700 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
+        <div className="flex items-center mb-4">
+          <div className="p-3 bg-slate-100 text-slate-900 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors shrink-0">
+            <Icon size={24} />
+          </div>
+          <h3 className="text-lg md:text-xl font-bold ml-4 font-serif">{title}</h3>
+        </div>
+        <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-6 flex-grow">{description}</p>
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {tags.map((tag, index) => (
+            <span key={index} className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-600">
+              {tag}
             </span>
-            <h1 className={`text-lg md:text-2xl font-serif font-bold ${isScrolled ? "text-slate-900" : "text-white"}`}>
-              NEXT GENERATION DESIGN
-            </h1>
-          </div>
-
-          <div className="hidden lg:flex space-x-8">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className={`text-sm font-medium hover:text-amber-500 transition-colors ${isScrolled ? "text-slate-700" : "text-white"}`}
-              >
-                {item.name}
-              </a>
-            ))}
-          </div>
-
-          <div className="lg:hidden z-50 relative">
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`${isScrolled || isMobileMenuOpen ? "text-slate-900" : "text-white"}`}
-            >
-              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
+          ))}
         </div>
+      </div>
+    );
 
-        {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center lg:hidden animate-fade-in">
-            <div className="space-y-6 text-center">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block text-2xl font-serif font-bold text-slate-900 hover:text-amber-700 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
+    const App = () => {
+      const [isScrolled, setIsScrolled] = useState(false);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      return (
+        <div className="font-sans text-slate-800 bg-slate-50 selection:bg-amber-200">
+          
+          {/* Navigation */}
+          <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? "bg-white/95 backdrop-blur-md shadow-md py-3" : "bg-transparent py-6"}`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+              <div className="flex flex-col z-50 relative">
+                <span className={`text-[10px] md:text-xs font-bold tracking-widest ${isScrolled ? "text-slate-500" : "text-white/80"}`}>
+                  (一社)次世代設計研究所
+                </span>
+                <h1 className={`text-lg md:text-2xl font-serif font-bold ${isScrolled ? "text-slate-900" : "text-white"}`}>
+                  NEXT GENERATION DESIGN
+                </h1>
+              </div>
+
+              <div className="hidden lg:flex space-x-8">
+                {navigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={`text-sm font-medium hover:text-amber-500 transition-colors ${isScrolled ? "text-slate-700" : "text-white"}`}
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+
+              <div className="lg:hidden z-50 relative">
+                <button 
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className={`${isScrolled || isMobileMenuOpen ? "text-slate-900" : "text-white"}`}
                 >
-                  {item.name}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={images.hero}
-            alt="Main Visual" 
-            className="w-full h-full object-cover filter brightness-50"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-transparent"></div>
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white mt-16 w-full">
-          <div className="md:w-3/4">
-            <p className="text-amber-400 font-bold tracking-widest mb-4">
-              TRADITION × INNOVATION
-            </p>
-            <h1 className="text-3xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-8">
-              次世代を、<br/>
-              <span className="text-amber-100">設計</span>する。
-            </h1>
-            <p className="text-sm md:text-xl text-slate-200 mb-10 max-w-2xl leading-relaxed">
-              コンサルティング、まちづくり、そして「日本伝家元制度」。<br className="hidden md:block"/>
-              私たちのすべての事業の根幹には、30年以上の指導歴と心理学を統合した<br className="hidden md:block"/>
-              独自メソッド「日本伝シンプルコーチング」があります。
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#academy" className="bg-amber-700 text-white px-8 py-4 text-center font-bold hover:bg-amber-600 transition-colors flex items-center justify-center">
-                アカデミーについて <ArrowRight className="ml-2 w-4 h-4" />
-              </a>
-              <a href="#contact" className="bg-white/10 backdrop-blur-sm border border-white text-white px-8 py-4 text-center font-bold hover:bg-white hover:text-slate-900 transition-colors">
-                お問い合わせ
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Institute Section */}
-      <section id="institute" className="py-24 bg-white relative">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 hidden lg:block z-0"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <SectionTitle 
-                title="次世代設計研究所とは" 
-                subtitle="OUR MISSION" 
-                align="left" 
-              />
-              <p className="text-base md:text-lg text-slate-700 leading-relaxed mb-6 font-serif">
-                私たちは、古き良き日本の伝統と、現代の科学的アプローチを融合させ、
-                組織や個人の「次世代」のあり方を設計し、実現するプロフェッショナル集団です。
-              </p>
-              <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-8">
-                まちづくりから企業コンサルティング、顧問活動、そして究極の日本型マスタービジネスである
-                「日本伝家元制度 iemotto」の構築まで。そのすべての基盤において、
-                日本伝シンプルコーチングをフル活用し、確実な成果へと導きます。
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
-                    <Briefcase className="text-amber-700 w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">コンサルティング・顧問</h4>
-                    <p className="text-sm text-slate-600 mt-1">経営、営業、ブランディングの多角的視点からの支援。</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
-                    <Map className="text-amber-700 w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">まちづくり事業</h4>
-                    <p className="text-sm text-slate-600 mt-1">地域社会の活性化と未来に向けたコミュニティ設計。</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
-                     <Award className="text-amber-700 w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">日本伝家元制度 iemotto</h4>
-                    <p className="text-sm text-slate-600 mt-1">技術や知識を体系化し、永続するブランドを構築。</p>
-                  </div>
-                </div>
+                  {isMobileMenuOpen ? <Menu size={28} /> : <Menu size={28} />}
+                </button>
               </div>
             </div>
-            <div className="relative group">
-              <div className="absolute -inset-2 bg-amber-700/20 transform translate-x-2 translate-y-2 hidden md:block transition-transform group-hover:translate-x-4 group-hover:translate-y-4"></div>
-              {/* 架け橋の画像（赤い橋） */}
+
+            {isMobileMenuOpen && (
+              <div className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center lg:hidden animate-fade-in">
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="absolute top-6 right-4 text-slate-900"
+                >
+                  <X size={28} />
+                </button>
+                <div className="space-y-6 text-center">
+                  {navigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className="block text-2xl font-serif font-bold text-slate-900 hover:text-amber-700 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </nav>
+
+          {/* Hero Section */}
+          <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 z-0">
               <img 
-                src={images.tradition} 
-                alt="Bridge to the future" 
-                className="w-full h-[300px] md:h-[500px] object-cover shadow-2xl relative z-10"
+                src={images.hero}
+                alt="Main Visual" 
+                className="w-full h-full object-cover filter brightness-50"
               />
-              <div className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 bg-slate-900 p-6 md:p-8 text-white hidden md:block z-20 shadow-xl">
-                <p className="text-xs md:text-sm tracking-widest mb-2 text-amber-400">PHILOSOPHY</p>
-                <p className="text-xl md:text-2xl font-serif">不易流行</p>
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-transparent"></div>
+            </div>
+
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white mt-16 w-full">
+              <div className="md:w-3/4">
+                <p className="text-amber-400 font-bold tracking-widest mb-4">
+                  TRADITION × INNOVATION
+                </p>
+                <h1 className="text-3xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-8">
+                  次世代を、<br/>
+                  <span className="text-amber-100">設計</span>する。
+                </h1>
+                <p className="text-sm md:text-xl text-slate-200 mb-10 max-w-2xl leading-relaxed">
+                  コンサルティング、まちづくり、そして「日本伝家元制度」。<br className="hidden md:block"/>
+                  私たちのすべての事業の根幹には、30年以上の指導歴と心理学を統合した<br className="hidden md:block"/>
+                  独自メソッド「日本伝シンプルコーチング」があります。
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="#academy" className="bg-amber-700 text-white px-8 py-4 text-center font-bold hover:bg-amber-600 transition-colors flex items-center justify-center">
+                    アカデミーについて <ArrowRight className="ml-2 w-4 h-4" />
+                  </a>
+                  <a href="#contact" className="bg-white/10 backdrop-blur-sm border border-white text-white px-8 py-4 text-center font-bold hover:bg-white hover:text-slate-900 transition-colors block">
+                    お問い合わせ
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Academy Section */}
-      <section id="academy" className="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <SectionTitle 
-            title="日本伝シンプルコーチングアカデミー" 
-            subtitle="CORE METHODOLOGY" 
-            align="center"
-            light={true}
-          />
-          
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <p className="text-lg md:text-xl text-slate-300 leading-relaxed font-serif">
-              武道の精神性と、最先端の心理学を統合。<br/>
-              「シンプル」だからこそ、本質に届く。
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-800">
-            <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Star size={100} />
+          {/* Institute Section */}
+          <section id="institute" className="py-24 bg-white relative">
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 hidden lg:block z-0"></div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                  <SectionTitle 
+                    title="次世代設計研究所とは" 
+                    subtitle="OUR MISSION" 
+                    align="left" 
+                  />
+                  <p className="text-base md:text-lg text-slate-700 leading-relaxed mb-6 font-serif">
+                    私たちは、古き良き日本の伝統と、現代の科学的アプローチを融合させ、
+                    組織や個人の「次世代」のあり方を設計し、実現するプロフェッショナル集団です。
+                  </p>
+                  <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-8">
+                    まちづくりから企業コンサルティング、顧問活動、そして究極の日本型マスタービジネスである
+                    「日本伝家元制度 iemotto」の構築まで。そのすべての基盤において、
+                    日本伝シンプルコーチングをフル活用し、確実な成果へと導きます。
+                  </p>
+                  
+                  <div className="space-y-6">
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
+                        <Briefcase className="text-amber-700 w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">コンサルティング・顧問</h4>
+                        <p className="text-sm text-slate-600 mt-1">経営、営業、ブランディングの多角的視点からの支援。</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
+                        <Map className="text-amber-700 w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">まちづくり事業</h4>
+                        <p className="text-sm text-slate-600 mt-1">地域社会の活性化と未来に向けたコミュニティ設計。</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="bg-amber-100 p-2 rounded-full mr-4 shrink-0">
+                         <Award className="text-amber-700 w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">日本伝家元制度 iemotto</h4>
+                        <p className="text-sm text-slate-600 mt-1">技術や知識を体系化し、永続するブランドを構築。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative group">
+                  <div className="absolute -inset-2 bg-amber-700/20 transform translate-x-2 translate-y-2 hidden md:block transition-transform group-hover:translate-x-4 group-hover:translate-y-4"></div>
+                  {/* 架け橋の画像 */}
+                  <img 
+                    src={images.tradition} 
+                    alt="Bridge to the future" 
+                    className="w-full h-[300px] md:h-[500px] object-cover shadow-2xl relative z-10"
+                  />
+                  <div className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 bg-slate-900 p-6 md:p-8 text-white hidden md:block z-20 shadow-xl">
+                    <p className="text-xs md:text-sm tracking-widest mb-2 text-amber-400">PHILOSOPHY</p>
+                    <p className="text-xl md:text-2xl font-serif">不易流行</p>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
-                <span className="text-amber-600 mr-2 font-sans">01.</span>
-                武道 × 心理学
-              </h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                34年の日本武道歴と、選択理論心理学・NLP（神経言語プログラミング）の22年の研鑽を融合。身体知と理論の両面からアプローチします。
-              </p>
             </div>
-            <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Users size={100} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
-                <span className="text-amber-600 mr-2 font-sans">02.</span>
-                指導歴30年の実績
-              </h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                机上の空論ではありません。教育現場、企業研修、道場での実地指導を通じて、5000名以上の「前進」に寄り添ってきた現場の知恵です。
-              </p>
-            </div>
-            <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <BookOpen size={100} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
-                <span className="text-amber-600 mr-2 font-sans">03.</span>
-                独自流派の確立
-              </h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                流派代表師範としての知見を統合した「日本伝シンプルコーチング」。日本人になじむ、礼節と対話を重んじた独自のスタイルです。
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle 
-            title="アカデミー事業内容" 
-            subtitle="OUR PROGRAMS" 
-            align="center" 
-          />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <Card 
-              icon={Users}
-              title="コーチ養成講座"
-              description="基礎から応用まで、プロフェッショナルなコーチとして活躍するためのスキルとマインドを習得します。"
-              tags={["認定資格", "実技重視", "オンライン対応"]}
-            />
-            <Card 
-              icon={Award}
-              title="トレーナー養成講座"
-              description="日本伝シンプルコーチングを「教える」立場になるための上級講座。指導者としてのあり方を学びます。"
-              tags={["指導者育成", "フランチャイズ", "事業化"]}
-            />
-            <Card 
-              icon={Briefcase}
-              title="エグゼクティブコーチング"
-              description="経営者・リーダー層向けの1対1コーチング。事業の意思決定とメンタルマネジメントを強力にサポート。"
-              tags={["経営者向け", "完全個別", "秘密厳守"]}
-            />
-             <Card 
-              icon={BookOpen}
-              title="各種セミナー・研修"
-              description="企業、学校、教育委員会などでの講演会やワークショップ。組織のコミュニケーション課題を解決します。"
-              tags={["出張講演", "企業研修", "学校教育"]}
-            />
-            <Card 
-              icon={User}
-              title="マンツーマンコーチング"
-              description="個人の目標達成、課題解決のためのパーソナルセッション。人生の岐路において最適な選択を導き出します。"
-              tags={["人生設計", "キャリア", "メンタル"]}
-            />
-            <Card 
-              icon={Star}
-              title="事業化・独立支援"
-              description="教育関係を中心に、コーチングスキルを活かした事業の立ち上げやリブランディングを支援します。"
-              tags={["起業", "塾経営", "コンサル"]}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Profile Section */}
-      <section id="profile" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-12 items-start">
+          {/* Academy Section */}
+          <section id="academy" className="py-24 bg-slate-900 text-white relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
             
-            <div className="lg:w-1/3 w-full">
-              <div className="relative mb-8 max-w-sm mx-auto lg:max-w-none">
-                <div className="absolute top-4 left-4 w-full h-full border-2 border-amber-700 z-0 hidden md:block"></div>
-                <img 
-                  src={images.profile}
-                  alt="山村和也理事長" 
-                  className="w-full grayscale hover:grayscale-0 transition-all duration-700 relative z-10 shadow-lg object-cover aspect-[3/4]"
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <SectionTitle 
+                title="日本伝シンプルコーチングアカデミー" 
+                subtitle="CORE METHODOLOGY" 
+                align="center"
+                light={true}
+              />
+              
+              <div className="max-w-4xl mx-auto text-center mb-16">
+                <p className="text-lg md:text-xl text-slate-300 leading-relaxed font-serif">
+                  武道の精神性と、最先端の心理学を統合。<br/>
+                  「シンプル」だからこそ、本質に届く。
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-800">
+                <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Star size={100} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
+                    <span className="text-amber-600 mr-2 font-sans">01.</span>
+                    武道 × 心理学
+                  </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    34年の日本武道歴と、選択理論心理学・NLP（神経言語プログラミング）の22年の研鑽を融合。身体知と理論の両面からアプローチします。
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Users size={100} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
+                    <span className="text-amber-600 mr-2 font-sans">02.</span>
+                    指導歴30年の実績
+                  </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    机上の空論ではありません。教育現場、企業研修、道場での実地指導を通じて、5000名以上の「前進」に寄り添ってきた現場の知恵です。
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-8 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <BookOpen size={100} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 flex items-center text-slate-900 font-serif">
+                    <span className="text-amber-600 mr-2 font-sans">03.</span>
+                    独自流派の確立
+                  </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    流派代表師範としての知見を統合した「日本伝シンプルコーチング」。日本人になじむ、礼節と対話を重んじた独自のスタイルです。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Services Section */}
+          <section id="services" className="py-24 bg-slate-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <SectionTitle 
+                title="アカデミー事業内容" 
+                subtitle="OUR PROGRAMS" 
+                align="center" 
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <Card 
+                  icon={Users}
+                  title="コーチ養成講座"
+                  description="基礎から応用まで、プロフェッショナルなコーチとして活躍するためのスキルとマインドを習得します。"
+                  tags={["認定資格", "実技重視", "オンライン対応"]}
+                />
+                <Card 
+                  icon={Award}
+                  title="トレーナー養成講座"
+                  description="日本伝シンプルコーチングを「教える」立場になるための上級講座。指導者としてのあり方を学びます。"
+                  tags={["指導者育成", "フランチャイズ", "事業化"]}
+                />
+                <Card 
+                  icon={Briefcase}
+                  title="エグゼクティブコーチング"
+                  description="経営者・リーダー層向けの1対1コーチング。事業の意思決定とメンタルマネジメントを強力にサポート。"
+                  tags={["経営者向け", "完全個別", "秘密厳守"]}
+                />
+                 <Card 
+                  icon={BookOpen}
+                  title="各種セミナー・研修"
+                  description="企業、学校、教育委員会などでの講演会やワークショップ。組織のコミュニケーション課題を解決します。"
+                  tags={["出張講演", "企業研修", "学校教育"]}
+                />
+                <Card 
+                  icon={User}
+                  title="マンツーマンコーチング"
+                  description="個人の目標達成、課題解決のためのパーソナルセッション。人生の岐路において最適な選択を導き出します。"
+                  tags={["人生設計", "キャリア", "メンタル"]}
+                />
+                <Card 
+                  icon={Star}
+                  title="事業化・独立支援"
+                  description="教育関係を中心に、コーチングスキルを活かした事業の立ち上げやリブランディングを支援します。"
+                  tags={["起業", "塾経営", "コンサル"]}
                 />
               </div>
-              <div className="bg-slate-900 text-white p-6 relative z-20 -mt-8 mx-4 shadow-xl text-center">
-                <h3 className="text-xl font-bold mb-2 font-serif">山村 和也</h3>
-                <p className="text-amber-400 text-xs tracking-widest">KAZUYA YAMAMURA</p>
-              </div>
-              
-              <div className="mt-8 space-y-3 text-sm text-slate-700 font-serif">
-                <p className="border-b border-slate-200 py-2 font-bold flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>(一社)次世代設計研究所 理事長</p>
-                <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>日本伝シンプルコーチングアカデミー代表トレーナー</p>
-                <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>日本伝家元連合会 会長</p>
-                <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>NPO法人全日本合気拳法連盟師範・会長</p>
-                <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>ヒット進学ゼミ・研究型教室塾長</p>
-                <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>総合型選抜専門塾WILLアカデミー代表</p>
-                <p className="py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>大阪工業大学工学部都市デザイン工学科 非常勤講師</p>
+            </div>
+          </section>
+
+          {/* Profile Section */}
+          <section id="profile" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col lg:flex-row gap-12 items-start">
+                
+                <div className="lg:w-1/3 w-full">
+                  <div className="relative mb-8 max-w-sm mx-auto lg:max-w-none">
+                    <div className="absolute top-4 left-4 w-full h-full border-2 border-amber-700 z-0 hidden md:block"></div>
+                    <img 
+                      src={images.profile}
+                      alt="山村和也理事長" 
+                      className="w-full grayscale hover:grayscale-0 transition-all duration-700 relative z-10 shadow-lg object-cover aspect-[3/4]"
+                    />
+                  </div>
+                  <div className="bg-slate-900 text-white p-6 relative z-20 -mt-8 mx-4 shadow-xl text-center">
+                    <h3 className="text-xl font-bold mb-2 font-serif">山村 和也</h3>
+                    <p className="text-amber-400 text-xs tracking-widest">KAZUYA YAMAMURA</p>
+                  </div>
+                  
+                  <div className="mt-8 space-y-3 text-sm text-slate-700 font-serif">
+                    <p className="border-b border-slate-200 py-2 font-bold flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>(一社)次世代設計研究所 理事長</p>
+                    <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>日本伝シンプルコーチングアカデミー代表トレーナー</p>
+                    <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>日本伝家元連合会 会長</p>
+                    <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>NPO法人全日本合気拳法連盟師範・会長</p>
+                    <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>ヒット進学ゼミ・研究型教室塾長</p>
+                    <p className="border-b border-slate-200 py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>総合型選抜専門塾WILLアカデミー代表</p>
+                    <p className="py-2 flex items-center"><ChevronRight size={14} className="text-amber-600 mr-2"/>大阪工業大学工学部都市デザイン工学科 非常勤講師</p>
+                  </div>
+                </div>
+
+                <div className="lg:w-2/3">
+                  <SectionTitle 
+                    title="教育事業家として、武道家として" 
+                    subtitle="PROFILE" 
+                    align="left" 
+                  />
+                  
+                  <div className="prose prose-lg text-slate-600 font-serif leading-loose">
+                    <p>
+                      <span className="text-2xl font-bold text-slate-900 mr-2">大学1回生</span>
+                      のときに家庭教師派遣で起業して以来、教育の道一筋に歩んでまいりました。教員免許を取得し、塾での勤務、非常勤講師、教室長、部長を経て独立。現場での実践こそが最大の学びであると確信しています。
+                    </p>
+                    <p className="mt-6">
+                      私の基盤には、<strong className="text-slate-900 border-b-2 border-amber-400">日本武道歴34年・指導歴30年</strong>の経験があります。武道が教える「心技体」の統一と、22年かけて学んだ選択理論心理学、NLP（神経言語プログラミング）の理論。これらを統合し、独自流派「日本伝シンプルコーチング」を確立しました。
+                    </p>
+                    <p className="mt-6">
+                      これまでに、学校、大学、教育委員会、大手塾、個人塾でのセミナーや講演会を多数経験。幼年から企業経営者まで、総計<strong className="text-amber-700 text-2xl mx-1">5000名</strong>を超える方々の「前進」に寄り添ってきました。
+                    </p>
+                    <p className="mt-6">
+                      教育関係を中心とした事業相談や、事業化のご支援も多数承っております。現在は、次世代設計研究所の理事長として、まちづくりや企業の顧問活動を通じ、個人と組織が本来持っている力を最大限に引き出し、次世代へとつなぐ設計図を描いています。
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 border-t border-slate-200 pt-8">
+                    <div className="text-center p-4 bg-slate-50 rounded">
+                      <p className="text-3xl font-bold text-slate-900">34<span className="text-sm font-normal">年</span></p>
+                      <p className="text-xs text-slate-500 mt-1">武道歴</p>
+                    </div>
+                    <div className="text-center p-4 bg-slate-50 rounded">
+                      <p className="text-3xl font-bold text-slate-900">30<span className="text-sm font-normal">年</span></p>
+                      <p className="text-xs text-slate-500 mt-1">指導歴</p>
+                    </div>
+                    <div className="text-center p-4 bg-slate-50 rounded">
+                      <p className="text-3xl font-bold text-slate-900">22<span className="text-sm font-normal">年</span></p>
+                      <p className="text-xs text-slate-500 mt-1">心理学研究</p>
+                    </div>
+                    <div className="text-center p-4 bg-slate-50 rounded">
+                      <p className="text-3xl font-bold text-slate-900">5000<span className="text-sm font-normal">名+</span></p>
+                      <p className="text-xs text-slate-500 mt-1">指導実績</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </section>
 
-            <div className="lg:w-2/3">
+          {/* Contact Section */}
+          <section id="contact" className="py-24 bg-slate-900 text-white relative">
+            <div className="absolute inset-0 z-0 opacity-20" style={{backgroundImage: `url(${images.hero})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
+            <div className="absolute inset-0 z-0 bg-slate-900/90"></div>
+            
+            <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
               <SectionTitle 
-                title="教育事業家として、武道家として" 
-                subtitle="PROFILE" 
-                align="left" 
+                title="お問い合わせ" 
+                subtitle="CONTACT" 
+                align="center"
+                light={true}
               />
-              
-              <div className="prose prose-lg text-slate-600 font-serif leading-loose">
-                <p>
-                  <span className="text-2xl font-bold text-slate-900 mr-2">大学1回生</span>
-                  のときに家庭教師派遣で起業して以来、教育の道一筋に歩んでまいりました。教員免許を取得し、塾での勤務、非常勤講師、教室長、部長を経て独立。現場での実践こそが最大の学びであると確信しています。
-                </p>
-                <p className="mt-6">
-                  私の基盤には、<strong className="text-slate-900 border-b-2 border-amber-400">日本武道歴34年・指導歴30年</strong>の経験があります。武道が教える「心技体」の統一と、22年かけて学んだ選択理論心理学、NLP（神経言語プログラミング）の理論。これらを統合し、独自流派「日本伝シンプルコーチング」を確立しました。
-                </p>
-                <p className="mt-6">
-                  これまでに、学校、大学、教育委員会、大手塾、個人塾でのセミナーや講演会を多数経験。幼年から企業経営者まで、総計<strong className="text-amber-700 text-2xl mx-1">5000名</strong>を超える方々の「前進」に寄り添ってきました。
-                </p>
-                <p className="mt-6">
-                  教育関係を中心とした事業相談や、事業化のご支援も多数承っております。現在は、次世代設計研究所の理事長として、まちづくりや企業の顧問活動を通じ、個人と組織が本来持っている力を最大限に引き出し、次世代へとつなぐ設計図を描いています。
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 border-t border-slate-200 pt-8">
-                <div className="text-center p-4 bg-slate-50 rounded">
-                  <p className="text-3xl font-bold text-slate-900">34<span className="text-sm font-normal">年</span></p>
-                  <p className="text-xs text-slate-500 mt-1">武道歴</p>
-                </div>
-                <div className="text-center p-4 bg-slate-50 rounded">
-                  <p className="text-3xl font-bold text-slate-900">30<span className="text-sm font-normal">年</span></p>
-                  <p className="text-xs text-slate-500 mt-1">指導歴</p>
-                </div>
-                <div className="text-center p-4 bg-slate-50 rounded">
-                  <p className="text-3xl font-bold text-slate-900">22<span className="text-sm font-normal">年</span></p>
-                  <p className="text-xs text-slate-500 mt-1">心理学研究</p>
-                </div>
-                <div className="text-center p-4 bg-slate-50 rounded">
-                  <p className="text-3xl font-bold text-slate-900">5000<span className="text-sm font-normal">名+</span></p>
-                  <p className="text-xs text-slate-500 mt-1">指導実績</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-24 bg-slate-900 text-white relative">
-        <div className="absolute inset-0 z-0 opacity-20" style={{backgroundImage: `url(${images.hero})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
-        <div className="absolute inset-0 z-0 bg-slate-900/90"></div>
-        
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <SectionTitle 
-            title="お問い合わせ" 
-            subtitle="CONTACT" 
-            align="center"
-            light={true}
-          />
-          <p className="text-slate-300 mb-12 text-lg">
-            講演依頼、研修、コーチング、コンサルティングのご相談など、<br/>
-            下記メールアドレスよりお気軽にお問い合わせください。
-          </p>
-          
-          <div className="bg-white/5 backdrop-blur-md p-12 rounded-lg border border-white/20 shadow-2xl">
-            <div className="flex flex-col items-center justify-center space-y-8">
-              <Mail size={64} className="text-amber-400" />
-              
-              <div className="text-center">
-                 <p className="text-sm text-slate-400 mb-2 uppercase tracking-widest">E-mail Address</p>
-                 <a 
-                   href="mailto:hityamamura@gmail.com"
-                   className="block text-2xl md:text-4xl font-serif font-bold tracking-wide text-white hover:text-amber-400 transition-colors break-all"
-                 >
-                   hityamamura@gmail.com
-                 </a>
-              </div>
-
-              <a 
-                href="mailto:hityamamura@gmail.com"
-                className="inline-flex items-center justify-center bg-amber-700 text-white px-10 py-4 text-lg font-bold hover:bg-amber-600 transition-all duration-300 transform hover:scale-105 rounded-full shadow-lg"
-              >
-                メールを送信する <ArrowRight className="ml-2" />
-              </a>
-              
-              <p className="text-slate-400 text-sm mt-4">
-                ※メーラーが起動します
+              <p className="text-slate-300 mb-12 text-lg">
+                講演依頼、研修、コーチング、コンサルティングのご相談など、<br/>
+                下記メールアドレスよりお気軽にお問い合わせください。
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
+              
+              <div className="bg-white/5 backdrop-blur-md p-12 rounded-lg border border-white/20 shadow-2xl">
+                <div className="flex flex-col items-center justify-center space-y-8">
+                  <Mail size={64} className="text-amber-400" />
+                  
+                  <div className="text-center">
+                     <p className="text-sm text-slate-400 mb-2 uppercase tracking-widest">E-mail Address</p>
+                     <a 
+                       href="mailto:hityamamura@gmail.com"
+                       className="block text-2xl md:text-4xl font-serif font-bold tracking-wide text-white hover:text-amber-400 transition-colors break-all"
+                     >
+                       hityamamura@gmail.com
+                     </a>
+                  </div>
 
-      {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="text-white text-xl font-bold font-serif mb-2">一般社団法人 次世代設計研究所</h2>
-              <p className="text-sm font-medium">日本伝シンプルコーチングアカデミー</p>
-              <div className="mt-4 flex flex-wrap gap-4">
-                 <span className="text-xs border border-slate-700 px-3 py-1 rounded text-slate-500">日本伝家元連合会加盟</span>
-                 <span className="text-xs border border-slate-700 px-3 py-1 rounded text-slate-500">大阪府大阪市</span>
+                  <a 
+                    href="mailto:hityamamura@gmail.com"
+                    className="inline-flex items-center justify-center bg-amber-700 text-white px-10 py-4 text-lg font-bold hover:bg-amber-600 transition-all duration-300 transform hover:scale-105 rounded-full shadow-lg"
+                  >
+                    メールを送信する <ArrowRight className="ml-2" />
+                  </a>
+                  
+                  <p className="text-slate-400 text-sm mt-4">
+                    ※メーラーが起動します
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="md:text-right text-sm">
-              <p>© Next Generation Design Institute. All Rights Reserved.</p>
+          </section>
+
+          {/* Footer */}
+          <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h2 className="text-white text-xl font-bold font-serif mb-2">一般社団法人 次世代設計研究所</h2>
+                  <p className="text-sm font-medium">日本伝シンプルコーチングアカデミー</p>
+                  <div className="mt-4 flex flex-wrap gap-4">
+                     <span className="text-xs border border-slate-700 px-3 py-1 rounded text-slate-500">日本伝家元連合会加盟</span>
+                     <span className="text-xs border border-slate-700 px-3 py-1 rounded text-slate-500">大阪府大阪市</span>
+                  </div>
+                </div>
+                <div className="md:text-right text-sm">
+                  <p>© Next Generation Design Institute. All Rights Reserved.</p>
+                </div>
+              </div>
             </div>
-          </div>
+          </footer>
         </div>
-      </footer>
-    </div>
-  );
-}
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
